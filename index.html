@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neon Device Verification</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      overflow: hidden;
+    }
+    
+    .neon-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    .glass-card {
+      width: 90%;
+      max-width: 450px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 40px 30px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .glass-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: 0.5s;
+    }
+    
+    .glass-card:hover::before {
+      left: 100%;
+    }
+    
+    .neon-icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 0 10px currentColor);
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+    
+    .neon-title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      background: linear-gradient(135deg, #fff, #a8edea);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);
+    }
+    
+    .neon-message {
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 30px;
+      line-height: 1.6;
+      font-size: 1.1rem;
+    }
+    
+    .orb-container {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin: 30px 0;
+    }
+    
+    .orb {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    
+    .orb:nth-child(2) { animation-delay: 0.3s; }
+    .orb:nth-child(3) { animation-delay: 0.6s; }
+    .orb:nth-child(4) { animation-delay: 0.9s; }
+    
+    .neon-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 14px 35px;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .neon-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: 0.5s;
+    }
+    
+    .neon-btn:hover::before {
+      left: 100%;
+    }
+    
+    .neon-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(1deg); }
+    }
+    
+    @keyframes glow {
+      from { filter: drop-shadow(0 0 5px currentColor); }
+      to { filter: drop-shadow(0 0 20px currentColor); }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.3; }
+      50% { transform: scale(1.2); opacity: 1; }
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    .success .neon-icon { color: #00ff88; }
+    .warning .neon-icon { color: #ffaa00; }
+    .error .neon-icon { color: #ff4444; }
+    
+    .developer-credit {
+      position: absolute;
+      bottom: 15px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+    
+    .developer-credit a {
+      color: #a8edea;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    .developer-credit a:hover {
+      text-decoration: underline;
+      text-shadow: 0 0 10px rgba(168, 237, 234, 0.5);
+    }
+  </style>
+</head>
+<body>
+  <div class="neon-bg"></div>
+  
+  <div class="glass-card">
+    <!-- Loading Screen -->
+    <div id="loadingScreen">
+      <div class="neon-icon">🌀</div>
+      <div class="neon-title">Device Scan</div>
+      <div class="neon-message">Securely analyzing your device configuration</div>
+      
+      <div class="orb-container">
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+      </div>
+      
+      <div class="neon-message">This will only take a moment...</div>
+      
+      <div class="developer-credit">
+        Developed by <a href="https://t.me/txgimran" target="_blank">#txg</a>
+      </div>
+    </div>
+    
+    <!-- VPN Blocked -->
+    <div id="vpnScreen" class="hidden error">
+      <div class="neon-icon">🌐</div>
+      <div class="neon-title">Network Issue</div>
+      <div class="neon-message">Virtual private networks are not supported for security verification</div>
+      <button class="neon-btn" onclick="closeWindow()">Close</button>
+      
+      <div class="developer-credit">
+        Developed by <a href="https://t.me/txgimran" target="_blank">#txg</a>
+      </div>
+    </div>
+    
+    <!-- Same Device -->
+    <div id="sameScreen" class="hidden warning">
+      <div class="neon-icon">📱</div>
+      <div class="neon-title">Device Recognized</div>
+      <div class="neon-message">This device is already registered for this bot</div>
+      <button class="neon-btn" onclick="closeWindow()">Understand</button>
+      
+      <div class="developer-credit">
+        Developed by <a href="https://t.me/txgimran" target="_blank">#txg</a>
+      </div>
+    </div>
+    
+    <!-- Verified Success -->
+    <div id="successScreen" class="hidden success">
+      <div class="neon-icon">✨</div>
+      <div class="neon-title">Access Granted</div>
+      <div class="neon-message">Your device has been successfully verified and secured</div>
+      <button class="neon-btn" onclick="closeWindow()">Continue</button>
+      
+      <div class="developer-credit">
+        Developed by <a href="https://t.me/txgimran" target="_blank">#txg</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // DOM Elements
+    const loadingScreen = document.getElementById('loadingScreen');
+    const vpnScreen = document.getElementById('vpnScreen');
+    const sameScreen = document.getElementById('sameScreen');
+    const successScreen = document.getElementById('successScreen');
+
+    // URL Parameters
+    const params = new URLSearchParams(window.location.search);
+    const webhookUrl = decodeURIComponent(params.get("webhookUrl") || "");
+    const botId = params.get("botId") || "";
+
+    // Device verification tracking - BOT SPECIFIC
+    const VERIFIED_DEVICES_KEY = `neonVerified_${botId}`;
+    
+    // Start verification immediately
+    document.addEventListener('DOMContentLoaded', startVerification);
+
+    async function startVerification() {
+      try {
+        // Wait for 2 seconds
+        await delay(2500);
+        
+        // Create device fingerprint (user_hash)
+        const user_hash = createUserHash();
+        
+        // Check for VPN
+        const vpn = await checkForVPN();
+        
+        // Prepare results for bot
+        const results = {
+          user_hash: user_hash,
+          captcha: "true",
+          vpn: vpn ? "true" : "false"
+        };
+        
+        if (vpn) {
+          // VPN detected
+          showScreen('vpnScreen');
+          sendWebhook(results, "vpn_blocked");
+        } else {
+          // Check if device already verified FOR THIS SPECIFIC BOT
+          const verifiedDevices = getVerifiedDevices();
+          const alreadyVerified = verifiedDevices.includes(user_hash);
+          
+          if (alreadyVerified) {
+            // Same device FOR THIS BOT
+            showScreen('sameScreen');
+            sendWebhook(results, "already_verified");
+          } else {
+            // New device FOR THIS BOT
+            markDeviceAsVerified(user_hash);
+            showScreen('successScreen');
+            sendWebhook(results, "verified");
+          }
+        }
+      } catch (error) {
+        console.error('Verification error:', error);
+        showScreen('vpnScreen');
+      }
+    }
+
+    function showScreen(screenId) {
+      // Hide all screens
+      loadingScreen.classList.add('hidden');
+      vpnScreen.classList.add('hidden');
+      sameScreen.classList.add('hidden');
+      successScreen.classList.add('hidden');
+      
+      // Show the selected screen
+      document.getElementById(screenId).classList.remove('hidden');
+    }
+
+    function getVerifiedDevices() {
+      try {
+        const stored = localStorage.getItem(VERIFIED_DEVICES_KEY);
+        return stored ? JSON.parse(stored) : [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function markDeviceAsVerified(user_hash) {
+      try {
+        const verifiedDevices = getVerifiedDevices();
+        if (!verifiedDevices.includes(user_hash)) {
+          verifiedDevices.push(user_hash);
+          localStorage.setItem(VERIFIED_DEVICES_KEY, JSON.stringify(verifiedDevices));
+        }
+      } catch (error) {
+        console.error('Error saving verified device:', error);
+      }
+    }
+
+    function createUserHash() {
+      const factors = [
+        navigator.userAgent,
+        navigator.hardwareConcurrency,
+        screen.width,
+        screen.height,
+        screen.colorDepth,
+        navigator.language,
+        new Date().getTimezoneOffset(),
+        navigator.platform,
+        navigator.deviceMemory || 'unknown',
+        navigator.maxTouchPoints || 'unknown'
+      ].join('|');
+      
+      let hash = 0;
+      for (let i = 0; i < factors.length; i++) {
+        const char = factors.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash;
+      }
+      
+      return 'NEON_' + Math.abs(hash).toString(36).slice(0, 10).toUpperCase();
+    }
+
+    async function checkForVPN() {
+      try {
+        const pc = new RTCPeerConnection({ iceServers: [] });
+        pc.createDataChannel('');
+        const offer = await pc.createOffer();
+        await pc.setLocalDescription(offer);
+        
+        return new Promise(resolve => {
+          let vpnDetected = false;
+          
+          pc.onicecandidate = (ice) => {
+            if (!ice || !ice.candidate) {
+              resolve(vpnDetected);
+              return;
+            }
+            
+            const candidate = ice.candidate.candidate;
+            if (candidate.includes('relay') || candidate.includes('srflx') || 
+                candidate.includes('turn') || candidate.includes('vpn') ||
+                candidate.includes('proxy')) {
+              vpnDetected = true;
+            }
+          };
+          
+          setTimeout(() => resolve(vpnDetected), 1500);
+        });
+      } catch (error) {
+        return false;
+      }
+    }
+
+    function sendWebhook(results, status) {
+      if (!webhookUrl) return;
+      
+      const payload = {
+        botId: botId,
+        status: status,
+        results: results,
+        timestamp: new Date().toISOString()
+      };
+      
+      fetch(webhookUrl, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+      }).catch(error => console.error('Webhook error:', error));
+    }
+
+    function delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function closeWindow() {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.close();
+      }
+      
+      setTimeout(() => {
+        window.location.href = 'about:blank';
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
